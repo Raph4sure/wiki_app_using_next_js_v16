@@ -1,17 +1,17 @@
-import { defineConfig } from 'drizzle-kit';
-import * as dotenv from 'dotenv';
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
+import * as dotenv from "dotenv";
+import { defineConfig } from "drizzle-kit";
 
 dotenv.config({
-  path: '.env.local',
+  path: ".env.local",
 });
 
-assert(process.env.DATABASE_URL, 'Database URL is needed');
+assert(process.env.DATABASE_URL, "Database URL is needed");
 
 export default defineConfig({
-  out: './drizzle',
-  schema: './src/db/schema.ts',
-  dialect: 'postgresql',
+  out: "./drizzle",
+  schema: "./src/db/schema.ts",
+  dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,
   },
