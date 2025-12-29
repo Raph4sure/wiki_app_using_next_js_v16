@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { stackServerApp } from '@/stack/server';
+import { redirect } from "next/navigation";
+import { stackServerApp } from "@/stack/server";
 
 export type CreateArticleType = {
   title: string;
@@ -18,27 +18,27 @@ export type UpdateArticleType = {
 export async function createArticle(data: CreateArticleType) {
   const user = stackServerApp.getUser();
   if (!user) {
-    throw new Error('❌ Unauthorized');
+    throw new Error("❌ Unauthorized");
   }
-  console.log('✨ Article Created Succesfully', data);
-  return { success: true, message: 'Article create logged (stub)' };
+  console.log("✨ Article Created Succesfully", data);
+  return { success: true, message: "Article create logged (stub)" };
 }
 
-export async function updateArticle(id:string, data: UpdateArticleType) {
+export async function updateArticle(id: string, data: UpdateArticleType) {
   const user = stackServerApp.getUser();
   if (!user) {
-    throw new Error('❌ Unauthorized');
+    throw new Error("❌ Unauthorized");
   }
-  console.log('📝  Article Updated Succesfully', { id, ...data });
+  console.log("📝  Article Updated Succesfully", { id, ...data });
   return { success: true, message: `Article ${id} update logged (stub)` };
 }
-export async function deleteArticle(id:string) {
+export async function deleteArticle(id: string) {
   const user = stackServerApp.getUser();
   if (!user) {
-    throw new Error('❌ Unauthorized');
+    throw new Error("❌ Unauthorized");
   }
-   console.log('🗑️ deleteArticle called:', id);
-   return { success: true, message: `Article ${id} delete logged (stub)` };
+  console.log("🗑️ deleteArticle called:", id);
+  return { success: true, message: `Article ${id} delete logged (stub)` };
 }
 
 // Form-friendly server action: accepts FormData from a client form and calls deleteArticle
