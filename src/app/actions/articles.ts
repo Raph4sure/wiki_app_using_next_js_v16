@@ -1,36 +1,44 @@
-"use server";
+'use server';
 
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
+import { stackServerApp } from '@/stack/server';
 
-export type CreateArticleInput = {
+export type CreateArticleType = {
   title: string;
   content: string;
   authorId: string;
   imageUrl?: string;
 };
-
-export type UpdateArticleInput = {
+export type UpdateArticleType = {
   title?: string;
   content?: string;
   imageUrl?: string;
 };
 
-export async function createArticle(data: CreateArticleInput) {
-  // TODO: Replace with actual database call
-  console.log("✨ createArticle called:", data);
-  return { success: true, message: "Article create logged (stub)" };
+export async function createArticle(data: CreateArticleType) {
+  const user = stackServerApp.getUser();
+  if (!user) {
+    throw new Error('❌ Unauthorized');
+  }
+  console.log('✨ Article Created Succesfully', data);
+  return { success: true, message: 'Article create logged (stub)' };
 }
 
-export async function updateArticle(id: string, data: UpdateArticleInput) {
-  // TODO: Replace with actual database update
-  console.log("📝 updateArticle called:", { id, ...data });
+export async function updateArticle(id:string, data: UpdateArticleType) {
+  const user = stackServerApp.getUser();
+  if (!user) {
+    throw new Error('❌ Unauthorized');
+  }
+  console.log('📝  Article Updated Succesfully', { id, ...data });
   return { success: true, message: `Article ${id} update logged (stub)` };
 }
-
-export async function deleteArticle(id: string) {
-  // TODO: Replace with actual database delete
-  console.log("🗑️ deleteArticle called:", id);
-  return { success: true, message: `Article ${id} delete logged (stub)` };
+export async function deleteArticle(id:string) {
+  const user = stackServerApp.getUser();
+  if (!user) {
+    throw new Error('❌ Unauthorized');
+  }
+   console.log('🗑️ deleteArticle called:', id);
+   return { success: true, message: `Article ${id} delete logged (stub)` };
 }
 
 // Form-friendly server action: accepts FormData from a client form and calls deleteArticle
