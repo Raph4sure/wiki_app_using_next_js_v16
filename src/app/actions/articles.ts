@@ -1,6 +1,7 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { authorizeUserToEditArticle } from "@/db/authz";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
@@ -37,6 +38,7 @@ export async function createArticle(data: CreateArticleType) {
       slug: `${Date.now()}`,
       published: true,
       authorId: user.id,
+      imageUrl: data.imageUrl ?? undefined,
     })
     .returning({ id: articles.id });
 
@@ -55,11 +57,23 @@ export async function updateArticle(id: string, data: UpdateArticleType) {
   }
   console.log("📝  Article Updated Succesfully", { id, ...data });
 
-  await db
+  const result = await db
     .update(articles)
-    .set({ title: data.title, content: data.content })
-    .where(eq(articles.id, +id));
+    .set({
+      title: data.title,
+      content: data.content,
+      imageUrl: data.imageUrl,
+      updatedAt: new Date().toISOString(),
+    })
+    .where(eq(articles.id, +id))
+    .returning(); // This returns the updated row
 
+  console.log("Rows updated in DB:", result.length);
+  console.log("Updated data:", result[0]);
+
+  revalidatePath(`/articles/${id}`);
+  // Also revalidate the homepage or list page if the title change affects it
+  revalidatePath("/");
   return { success: true, message: `Article ${id} update logged` };
 }
 export async function deleteArticle(id: string) {

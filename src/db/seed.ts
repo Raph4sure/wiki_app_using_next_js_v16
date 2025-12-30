@@ -1,6 +1,9 @@
 import { seed } from "drizzle-seed";
+import * as dotenv from "dotenv";
+import { StackClientApp, StackServerApp } from "@stackframe/stack";
 import db, { sql } from "@/db/index";
 import { articles, usersSync } from "@/db/schema";
+import { ensureUserExist } from "@/db/sync-user";
 
 const SEED_COUNT = 25;
 const SEED = 1337;
@@ -14,11 +17,33 @@ async function main() {
     // This is simpler and avoids needing to call setval later.
     await sql.query("TRUNCATE TABLE articles RESTART IDENTITY CASCADE;");
 
+    // Initialize Stack Auth to fetch real users
+    const stackClientApp = new StackClientApp({
+      tokenStore: "nextjs-cookie",
+    });
+    const stackServerApp = new StackServerApp({
+      inheritsFrom: stackClientApp,
+    });
+
+    console.log("🔄 Syncing users from Stack Auth...");
+    let realUsers: any[] = [];
+    try {
+      // @ts-ignore
+      realUsers = await stackServerApp.listUsers();
+      console.log(`✅ Found ${realUsers.length} user(s) in Stack Auth.`);
+    } catch (e) {
+      console.warn("⚠️ Failed to fetch users from Stack Auth:", e);
+    }
+
+    if (realUsers.length > 0) {
+      for (const user of realUsers) {
+        await ensureUserExist(user);
+      }
+      console.log("✅ Synced Stack users to Neon.");
+    }
+
     console.log("🔎 Querying existing users...");
-    let users = await db
-      .select({ id: usersSync.id })
-      .from(usersSync)
-      .orderBy(usersSync.id);
+    let users = await db.select({ id: usersSync.id }).from(usersSync).orderBy(usersSync.id);
 
     if (users.length === 0) {
       console.log("👤 No users found, inserting default seed user...");
@@ -30,11 +55,11 @@ async function main() {
       users = [{ id: "seed-user-001" }];
     }
 
-    const ids = users.map((user) => user.id);
+    const ids = users.map(user => user.id);
     console.log(`👥 Using ${users.length} user(s)`);
 
     console.log("🍩 Using drizzle-seed...");
-    await seed(db, { articles }, { seed: SEED }).refine((funcs) => ({
+    await seed(db, { articles }, { seed: SEED }).refine(funcs => ({
       articles: {
         count: SEED_COUNT,
         columns: {
@@ -78,7 +103,7 @@ async function main() {
     // the sequence behind the table's max value.
     try {
       await sql.query(
-        `SELECT setval(pg_get_serial_sequence('articles','id'), COALESCE((SELECT MAX(id) FROM articles), 1), true);`,
+        `SELECT setval(pg_get_serial_sequence('articles','id'), COALESCE((SELECT MAX(id) FROM articles), 1), true);`
       );
       console.log("✅ Sequence synced after seeding");
     } catch (err) {
