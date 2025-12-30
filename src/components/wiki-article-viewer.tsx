@@ -4,6 +4,7 @@ import { Calendar, ChevronRight, Edit, Home, Trash, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { deleteArticleForm } from "@/app/actions/articles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -123,6 +124,7 @@ export default function WikiArticleViewer({
           {/* Rendered Markdown Content */}
           <div className="prose prose-stone dark:prose-invert max-w-none">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
                 // Customize heading styles
                 h1: ({ children }) => (

@@ -1,6 +1,10 @@
 "use server";
-
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { authorizeUserToEditArticle } from "@/db/authz";
+import db from "@/db/index";
+import { articles } from "@/db/schema";
+import { ensureUserExist } from "@/db/sync-user";
 import { stackServerApp } from "@/stack/server";
 
 export type CreateArticleType = {
@@ -16,28 +20,60 @@ export type UpdateArticleType = {
 };
 
 export async function createArticle(data: CreateArticleType) {
-  const user = stackServerApp.getUser();
+  const user = await stackServerApp.getUser();
   if (!user) {
     throw new Error("❌ Unauthorized");
   }
+
+  await ensureUserExist(user);
+
   console.log("✨ Article Created Succesfully", data);
-  return { success: true, message: "Article create logged (stub)" };
+
+  const response = await db
+    .insert(articles)
+    .values({
+      title: data.title,
+      content: data.content,
+      slug: `${Date.now()}`,
+      published: true,
+      authorId: user.id,
+    })
+    .returning({ id: articles.id });
+
+  const articleId = response[0]?.id;
+
+  return { success: true, message: "Article create logged", id: articleId };
 }
 
 export async function updateArticle(id: string, data: UpdateArticleType) {
-  const user = stackServerApp.getUser();
+  const user = await stackServerApp.getUser();
   if (!user) {
     throw new Error("❌ Unauthorized");
+  }
+  if (!(await authorizeUserToEditArticle(user.id, +id))) {
+    throw new Error("❌ Forbidden");
   }
   console.log("📝  Article Updated Succesfully", { id, ...data });
-  return { success: true, message: `Article ${id} update logged (stub)` };
+
+  await db
+    .update(articles)
+    .set({ title: data.title, content: data.content })
+    .where(eq(articles.id, +id));
+
+  return { success: true, message: `Article ${id} update logged` };
 }
 export async function deleteArticle(id: string) {
-  const user = stackServerApp.getUser();
+  const user = await stackServerApp.getUser();
   if (!user) {
     throw new Error("❌ Unauthorized");
   }
+  if (!(await authorizeUserToEditArticle(user.id, +id))) {
+    throw new Error("❌ Forbidden");
+  }
   console.log("🗑️ deleteArticle called:", id);
+
+  await db.delete(articles).where(eq(articles.id, +id));
+
   return { success: true, message: `Article ${id} delete logged (stub)` };
 }
 
