@@ -1,14 +1,17 @@
-import resend from "@/email";
-import db from "@/db";
-import { usersSync, articles } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import db from "@/db";
+import { articles, usersSync } from "@/db/schema";
+import resend from "@/email";
 import CelebrationTemplate from "./templates/celebration-templates";
 
 const BASE_URL = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-export default async function sendCelebrationEmail(articleId: number, pageViews: number) {
+export default async function sendCelebrationEmail(
+  articleId: number,
+  pageViews: number,
+) {
   const response = await db
     .select({
       email: usersSync.email,
@@ -24,7 +27,7 @@ export default async function sendCelebrationEmail(articleId: number, pageViews:
 
   if (!email) {
     console.log(
-      `❌ skipping sending a celebration for getting ${pageViews} on article ${articleId}, could not find email`
+      `❌ skipping sending a celebration for getting ${pageViews} on article ${articleId}, could not find email`,
     );
     return;
   }
@@ -46,11 +49,13 @@ export default async function sendCelebrationEmail(articleId: number, pageViews:
   });
 
   if (!emailRes.error) {
-    console.log(`📧 sent ${id} a celebration for getting ${pageViews} on article ${articleId}`);
+    console.log(
+      `📧 sent ${id} a celebration for getting ${pageViews} on article ${articleId}`,
+    );
   } else {
     console.log(
       `❌ error sending ${id} a celebration for getting ${pageViews} page view on article ${articleId}`,
-      emailRes.error
+      emailRes.error,
     );
   }
 }

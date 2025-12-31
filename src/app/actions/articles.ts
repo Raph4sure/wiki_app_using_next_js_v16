@@ -1,13 +1,12 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import redis from "@/app/cache";
 import { authorizeUserToEditArticle } from "@/db/authz";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
 import { ensureUserExist } from "@/db/sync-user";
 import { stackServerApp } from "@/stack/server";
-import redis from "@/app/cache";
 
 export type CreateArticleType = {
   title: string;

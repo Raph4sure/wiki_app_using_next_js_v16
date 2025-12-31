@@ -5,7 +5,12 @@ type Props = {
   articleUrl?: string;
 };
 
-const CelebrationTemplate = ({ name, pageviews, articleTitle, articleUrl }: Props) => {
+const CelebrationTemplate = ({
+  name,
+  pageviews,
+  articleTitle,
+  articleUrl,
+}: Props) => {
   return (
     <html lang="en">
       <body
@@ -28,7 +33,9 @@ const CelebrationTemplate = ({ name, pageviews, articleTitle, articleUrl }: Prop
           <tr>
             <td style={{ paddingBottom: 12 }}>
               <div style={{ textAlign: "left" }}>
-                <strong style={{ fontSize: 18, color: "#0f172a" }}>Wikimasters</strong>
+                <strong style={{ fontSize: 18, color: "#0f172a" }}>
+                  Wikimasters
+                </strong>
               </div>
             </td>
           </tr>
@@ -54,8 +61,8 @@ const CelebrationTemplate = ({ name, pageviews, articleTitle, articleUrl }: Prop
                 </h1>
 
                 <p style={{ margin: "0 0 16px 0", color: "#334155" }}>
-                  Your article{articleTitle ? ` "${articleTitle}"` : ""} just hit{" "}
-                  <strong>{pageviews}</strong> views — that's a milestone.
+                  Your article{articleTitle ? ` "${articleTitle}"` : ""} just
+                  hit <strong>{pageviews}</strong> views — that's a milestone.
                 </p>
 
                 {articleUrl ? (
@@ -76,7 +83,8 @@ const CelebrationTemplate = ({ name, pageviews, articleTitle, articleUrl }: Prop
                 ) : null}
 
                 <p style={{ marginTop: 18, color: "#94a3b8", fontSize: 13 }}>
-                  Keep writing — you're helping other people learn. — The Wikimasters team
+                  Keep writing — you're helping other people learn. — The
+                  Wikimasters team
                 </p>
               </div>
             </td>
@@ -85,7 +93,8 @@ const CelebrationTemplate = ({ name, pageviews, articleTitle, articleUrl }: Prop
           <tr>
             <td style={{ paddingTop: 14 }}>
               <p style={{ margin: 0, color: "#94a3b8", fontSize: 12 }}>
-                You’re receiving this email because you authored content on Wikimasters.
+                You’re receiving this email because you authored content on
+                Wikimasters.
               </p>
             </td>
           </tr>

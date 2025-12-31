@@ -1,9 +1,8 @@
-import { seed } from "drizzle-seed";
-import * as dotenv from "dotenv";
 import { StackClientApp, StackServerApp } from "@stackframe/stack";
+import { seed } from "drizzle-seed";
 import db, { sql } from "@/db/index";
 import { articles, usersSync } from "@/db/schema";
-import { ensureUserExist } from "@/db/sync-user";
+import { ensureUserExist, StackUserType } from "@/db/sync-user";
 
 const SEED_COUNT = 25;
 const SEED = 1337;
@@ -26,9 +25,8 @@ async function main() {
     });
 
     console.log("🔄 Syncing users from Stack Auth...");
-    let realUsers: any[] = [];
+    let realUsers: StackUserType[] = [];
     try {
-      // @ts-ignore
       realUsers = await stackServerApp.listUsers();
       console.log(`✅ Found ${realUsers.length} user(s) in Stack Auth.`);
     } catch (e) {

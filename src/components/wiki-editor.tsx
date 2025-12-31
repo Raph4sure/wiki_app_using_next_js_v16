@@ -16,11 +16,11 @@ interface WikiEditorProps {
   articleId?: string;
 }
 
-interface FormData {
-  title: string;
-  content: string;
-  files: File[];
-}
+// interface FormData {
+//   title: string;
+//   content: string;
+//   files: File[];
+// }
 
 interface FormErrors {
   title?: string;
@@ -60,13 +60,13 @@ export default function WikiEditor({
     const selectedFiles = event.target.files;
     if (selectedFiles) {
       const newFiles = Array.from(selectedFiles);
-      setFiles(prev => [...prev, ...newFiles]);
+      setFiles((prev) => [...prev, ...newFiles]);
     }
   };
 
   // Remove file
   const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Handle form submission
@@ -82,7 +82,7 @@ export default function WikiEditor({
     try {
       // In a real app, you would upload files here and get URLs back
       // For now, we'll just skip the file upload part or use a placeholder if files exist
-      let imageUrl = undefined;
+      let imageUrl: string | undefined;
       if (files.length > 0) {
         const file = files[0];
         const formData = new FormData();
@@ -129,7 +129,8 @@ export default function WikiEditor({
 
       // Navigate using window.location to force a full reload and see changes
       // In a SPA you might use router.push, but full reload ensures data freshness for now
-      window.location.href = isEditing && articleId ? `/wiki/${articleId}` : "/";
+      window.location.href =
+        isEditing && articleId ? `/wiki/${articleId}` : "/";
     } catch (error) {
       console.error("Failed to save article:", error);
       alert("Failed to save article. Detailed error in console.");
@@ -142,7 +143,7 @@ export default function WikiEditor({
   const handleCancel = () => {
     // In a real app, you would navigate back
     const shouldLeave = window.confirm(
-      "Are you sure you want to cancel? Any unsaved changes will be lost."
+      "Are you sure you want to cancel? Any unsaved changes will be lost.",
     );
     if (shouldLeave) {
       console.log("User cancelled editing");
@@ -157,7 +158,9 @@ export default function WikiEditor({
       <div className="mb-8">
         <h1 className="text-3xl font-bold">{pageTitle}</h1>
         {isEditing && articleId && (
-          <p className="text-muted-foreground mt-2">Editing article ID: {articleId}</p>
+          <p className="text-muted-foreground mt-2">
+            Editing article ID: {articleId}
+          </p>
         )}
       </div>
 
@@ -175,10 +178,12 @@ export default function WikiEditor({
                 type="text"
                 placeholder="Enter article title..."
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
                 className={errors.title ? "border-destructive" : ""}
               />
-              {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
+              {errors.title && (
+                <p className="text-sm text-destructive">{errors.title}</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -191,10 +196,12 @@ export default function WikiEditor({
           <CardContent>
             <div className="space-y-2">
               <Label htmlFor="content">Content (Markdown) *</Label>
-              <div className={`border rounded-md ${errors.content ? "border-destructive" : ""}`}>
+              <div
+                className={`border rounded-md ${errors.content ? "border-destructive" : ""}`}
+              >
                 <MDEditor
                   value={content}
-                  onChange={val => setContent(val || "")}
+                  onChange={(val) => setContent(val || "")}
                   preview="edit"
                   hideToolbar={false}
                   visibleDragbar={false}
@@ -204,7 +211,9 @@ export default function WikiEditor({
                   }}
                 />
               </div>
-              {errors.content && <p className="text-sm text-destructive">{errors.content}</p>}
+              {errors.content && (
+                <p className="text-sm text-destructive">{errors.content}</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -219,11 +228,15 @@ export default function WikiEditor({
               <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
                 <Upload className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
                 <div className="space-y-2">
-                  <Label htmlFor="file-upload" className="cursor-pointer text-sm font-medium">
+                  <Label
+                    htmlFor="file-upload"
+                    className="cursor-pointer text-sm font-medium"
+                  >
                     Click to upload files
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Upload images, documents, or other files to attach to your article
+                    Upload images, documents, or other files to attach to your
+                    article
                   </p>
                 </div>
                 <Input
@@ -247,7 +260,9 @@ export default function WikiEditor({
                         className="flex items-center justify-between p-2 bg-muted rounded-md"
                       >
                         <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">{file.name}</span>
+                          <span className="text-sm font-medium">
+                            {file.name}
+                          </span>
                           <span className="text-xs text-muted-foreground">
                             ({(file.size / 1024).toFixed(1)} KB)
                           </span>
@@ -282,7 +297,11 @@ export default function WikiEditor({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="min-w-[100px]">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="min-w-[100px]"
+              >
                 {isSubmitting ? "Saving..." : "Save Article"}
               </Button>
             </div>

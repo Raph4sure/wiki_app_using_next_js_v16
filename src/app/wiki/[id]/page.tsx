@@ -107,14 +107,6 @@
 //   return <WikiArticleViewer article={mockArticle} canEdit={canEdit} />;
 // }
 
-
-
-
-
-
-
-
-
 import { notFound } from "next/navigation";
 import WikiArticleViewer from "@/components/wiki-article-viewer";
 import { authorizeUserToEditArticle } from "@/db/authz";
@@ -127,7 +119,9 @@ interface ViewArticlePageProps {
   }>;
 }
 
-export default async function ViewArticlePage({ params }: ViewArticlePageProps) {
+export default async function ViewArticlePage({
+  params,
+}: ViewArticlePageProps) {
   const { id } = await params;
 
   // Determine whether the currently-logged-in user can edit this article.

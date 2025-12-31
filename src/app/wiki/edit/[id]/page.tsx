@@ -63,7 +63,9 @@ interface EditArticlePageProps {
   }>;
 }
 
-export default async function EditArticlePage({ params }: EditArticlePageProps) {
+export default async function EditArticlePage({
+  params,
+}: EditArticlePageProps) {
   const { id } = await params;
   const _user = await stackServerApp.getUser({ or: "redirect" });
 

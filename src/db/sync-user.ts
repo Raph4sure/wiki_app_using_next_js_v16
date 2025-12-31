@@ -1,7 +1,7 @@
 import db from "@/db/index";
 import { usersSync } from "./schema";
 
-type StackUserType = {
+export type StackUserType = {
   id: string;
   displayName: string | null;
   primaryEmail: string | null;

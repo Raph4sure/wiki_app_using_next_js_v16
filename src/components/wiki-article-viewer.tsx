@@ -1,16 +1,24 @@
 "use client";
 
-import { Calendar, ChevronRight, Edit, Eye, Home, Trash, User } from "lucide-react";
+import {
+  Calendar,
+  ChevronRight,
+  Edit,
+  Eye,
+  Home,
+  Trash,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { deleteArticleForm } from "@/app/actions/articles";
+import { incrementPageview } from "@/app/actions/pageviews";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { incrementPageview } from "@/app/actions/pageviews";
-import { useEffect, useState, useRef } from "react";
 
 interface ViewerArticle {
   title: string;
@@ -27,10 +35,13 @@ interface WikiArticleViewerProps {
   pageviews?: number | null;
 }
 
-export default function WikiArticleViewer({ article, canEdit = false }: WikiArticleViewerProps) {
+export default function WikiArticleViewer({
+  article,
+  canEdit = false,
+}: WikiArticleViewerProps) {
   // local state to show updated pageviews after increment
   const [localPageviews, setLocalPageviews] = useState<number | null>(null);
-  
+
   const hasIncremented = useRef(false);
 
   useEffect(() => {
@@ -58,7 +69,10 @@ export default function WikiArticleViewer({ article, canEdit = false }: WikiArti
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-        <Link href="/" className="flex items-center hover:text-foreground transition-colors">
+        <Link
+          href="/"
+          className="flex items-center hover:text-foreground transition-colors"
+        >
           <Home className="h-4 w-4 mr-1" />
           Home
         </Link>
@@ -69,7 +83,9 @@ export default function WikiArticleViewer({ article, canEdit = false }: WikiArti
       {/* Article Header */}
       <div className="flex justify-between items-start mb-6">
         <div className="flex-1">
-          <h1 className="text-4xl font-bold text-foreground mb-4">{article.title}</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            {article.title}
+          </h1>
 
           {/* Article Metadata */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
@@ -106,7 +122,11 @@ export default function WikiArticleViewer({ article, canEdit = false }: WikiArti
             {/* Delete form calls the server action wrapper */}
             <form action={deleteArticleForm}>
               <input type="hidden" name="id" value={String(article.id)} />
-              <Button type="submit" variant="destructive" className="ml-2 cursor-pointer">
+              <Button
+                type="submit"
+                variant="destructive"
+                className="ml-2 cursor-pointer"
+              >
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
               </Button>
@@ -140,24 +160,38 @@ export default function WikiArticleViewer({ article, canEdit = false }: WikiArti
               components={{
                 // Customize heading styles
                 h1: ({ children }) => (
-                  <h1 className="text-3xl font-bold mt-8 mb-4 text-foreground">{children}</h1>
+                  <h1 className="text-3xl font-bold mt-8 mb-4 text-foreground">
+                    {children}
+                  </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-2xl font-semibold mt-6 mb-3 text-foreground">{children}</h2>
+                  <h2 className="text-2xl font-semibold mt-6 mb-3 text-foreground">
+                    {children}
+                  </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-xl font-semibold mt-4 mb-2 text-foreground">{children}</h3>
+                  <h3 className="text-xl font-semibold mt-4 mb-2 text-foreground">
+                    {children}
+                  </h3>
                 ),
                 // Customize paragraph styles
-                p: ({ children }) => <p className="mb-4 text-foreground leading-7">{children}</p>,
+                p: ({ children }) => (
+                  <p className="mb-4 text-foreground leading-7">{children}</p>
+                ),
                 // Customize list styles
                 ul: ({ children }) => (
-                  <ul className="mb-4 ml-6 list-disc text-foreground">{children}</ul>
+                  <ul className="mb-4 ml-6 list-disc text-foreground">
+                    {children}
+                  </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="mb-4 ml-6 list-decimal text-foreground">{children}</ol>
+                  <ol className="mb-4 ml-6 list-decimal text-foreground">
+                    {children}
+                  </ol>
                 ),
-                li: ({ children }) => <li className="mb-1 text-foreground">{children}</li>,
+                li: ({ children }) => (
+                  <li className="mb-1 text-foreground">{children}</li>
+                ),
                 // Customize code styles
                 code: ({ children, className }) => {
                   const isInline = !className;
@@ -232,7 +266,11 @@ export default function WikiArticleViewer({ article, canEdit = false }: WikiArti
 
             <form action={deleteArticleForm}>
               <input type="hidden" name="id" value={String(article.id)} />
-              <Button type="submit" variant="destructive" className="cursor-pointer">
+              <Button
+                type="submit"
+                variant="destructive"
+                className="cursor-pointer"
+              >
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
               </Button>
