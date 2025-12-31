@@ -7,6 +7,7 @@ import db from "@/db/index";
 import { articles } from "@/db/schema";
 import { ensureUserExist } from "@/db/sync-user";
 import { stackServerApp } from "@/stack/server";
+import redis from "@/app/cache";
 
 export type CreateArticleType = {
   title: string;
@@ -44,6 +45,8 @@ export async function createArticle(data: CreateArticleType) {
 
   const articleId = response[0]?.id;
 
+  redis.del("artices:all");
+
   return { success: true, message: "Article create logged", id: articleId };
 }
 
@@ -62,7 +65,7 @@ export async function updateArticle(id: string, data: UpdateArticleType) {
     .set({
       title: data.title,
       content: data.content,
-      imageUrl: data.imageUrl,
+      imageUrl: data.imageUrl ?? undefined,
       updatedAt: new Date().toISOString(),
     })
     .where(eq(articles.id, +id))
@@ -71,9 +74,8 @@ export async function updateArticle(id: string, data: UpdateArticleType) {
   console.log("Rows updated in DB:", result.length);
   console.log("Updated data:", result[0]);
 
-  revalidatePath(`/articles/${id}`);
-  // Also revalidate the homepage or list page if the title change affects it
-  revalidatePath("/");
+  redis.del("artices:all");
+
   return { success: true, message: `Article ${id} update logged` };
 }
 export async function deleteArticle(id: string) {
@@ -87,6 +89,8 @@ export async function deleteArticle(id: string) {
   console.log("🗑️ deleteArticle called:", id);
 
   await db.delete(articles).where(eq(articles.id, +id));
+
+  redis.del("artices:all");
 
   return { success: true, message: `Article ${id} delete logged (stub)` };
 }
